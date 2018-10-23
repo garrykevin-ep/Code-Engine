@@ -1,6 +1,6 @@
 from pathlib import Path
 import subprocess
-
+# from itertools  import izip
 
 class Engine():
 
@@ -20,6 +20,26 @@ class Engine():
 			except subprocess.TimeoutExpired:
 				raise self.TimeOut
 
+	def check_output(self,expected_output_path):
+		
+		with open(expected_output_path,'r') as expected_output , open(self.output_path,'r') as user_output :
+			if user_output.readlines() == expected_output.readlines():
+				return True
+			else:
+		 		return False
+		# 	user = user_output.readlines()
+		# 	exp = expected_output.readlines()
+		# 	if len(user) == 0 and len(exp) != 0:
+		# 		return False
+		# 	for linef1, linef2 in zip(user,exp):
+		# 		linef1 = linef1.rstrip('\r\n')
+		# 		linef2 = linef2.rstrip('\r\n')
+		# 		if linef1 != linef2:
+		# 			return False
+		# 	return True
+			
+			
+
 	class TimeOut(Exception):
 		pass
 
@@ -34,6 +54,7 @@ def main():
 	source_path = base_dir / 'source' / 'a.py'
 	testcase_path = base_dir / 'testcase' / 'a.input'
 	output_path = base_dir / 'output' / '1_1'
+	expected_output = base_dir / 'expet'
 	engine = Engine(source_path = source_path, testcase_path = testcase_path, output_path = output_path)
 	try:
 		engine.process()
@@ -42,9 +63,8 @@ def main():
 		print ("error..")
 	except Engine.TimeOut:
 		print ("time out")
-		# return "time out"
-	# f = open(source_code)
-	# print (f.readlines())
+	print (engine.check_output(expected_output))
+	
 
 
 main()
