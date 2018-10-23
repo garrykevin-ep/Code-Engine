@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>code-engine</title>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js">
+	</script>	
+</head>
+<body>
+{{ statement }}
+<br>
+<br>
+<form action=' {% url 'core:submit' test problem %}' method="post" enctype="multipart/form-data" name="fileinfo">
+	{% csrf_token %}
+	<label>source code</label>
+	<input id="source" type="file" name="source_code">
+	<input type="submit" value="submit">
+</form>
+
+<br>
+<br>
+{% for testcase in testcases  %}
+<div id="{{testcase.id}}">
+	testcase {{forloop.counter}}
+</div>
+	<br>
+{% endfor %}
+
+<script type="text/javascript">
+	
+	var csrfcookie = function() {
+	var cookieValue = null,
+    name = 'csrftoken';
+	if (document.cookie && document.cookie !== '') {
+    	var cookies = document.cookie.split(';');
+    	for (var i = 0; i < cookies.length; i++) {
+        	var cookie = cookies[i].trim();
+        	if (cookie.substring(0, name.length + 1) == (name + '=')) {
+            	cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+        }
+    }
+}
+return cookieValue;
+};
+
+
+	$('form').submit(function(event) {
+		event.preventDefault();
+
+		var formdata = new FormData(this);
+		
+		
+		var http_request = new XMLHttpRequest();
+  		
+  		http_request.open("POST", "/submit/test/1/problem/1", true);
+
+  		http_request.setRequestHeader('X-CSRFToken', csrfcookie());
+
+  		http_request.onload = function(oEvent) {
+   			 if (http_request.status == 200) 
+      			response = JSON.parse(http_request.response)
+      			
+      			$.each(response,function(tc_id,status){
+      				testcase = document.getElementById(tc_id);
+      				testcase.innerHTML =  testcase.innerHTML + ' '+ status
+      			});
+      			
+  		};
+
+
+  		http_request.send(formdata);
+  		
+	});
+</script>
+
+</body>
+</html>

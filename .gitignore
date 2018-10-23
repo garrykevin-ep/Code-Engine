@@ -110,3 +110,10 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+engine/expet
+engine/output/
+engine/source/
+engine/testcase/
+
+migrations/
+codeengine/media/
