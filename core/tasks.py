@@ -26,7 +26,7 @@ def execute_testcases(submission_file, submission_id,problem):
 				else:
 					response[id] = 'WA'
 			current_task.update_state(state="PROGRESS",
-				meta = {'response' : ["2"] })
+				meta =  response )
 	return response
 
 @shared_task

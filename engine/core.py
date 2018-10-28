@@ -4,7 +4,7 @@ import subprocess
 
 class Engine():
 
-	def __init__(self, source_path, testcase_path, output_path, timeout=1):
+	def __init__(self, source_path, testcase_path, output_path, timeout=6):
 		self.source_path = source_path
 		self.testcase_path = testcase_path
 		self.output_path = output_path
@@ -16,17 +16,21 @@ class Engine():
 				completed_process = subprocess.run(["python3", self.source_path ], timeout = self.timeout,\
 					stdout = output_file,stdin = testcase_file,stderr=output_file)
 				if completed_process.returncode != 0:
+					self.result = "ERROR"
 					raise self.CompileError
 			except subprocess.TimeoutExpired:
+				self.result = 'TLE'
 				raise self.TimeOut
 
 	def check_output(self,expected_output_path):
 		
 		with open(expected_output_path,'r') as expected_output , open(self.output_path,'r') as user_output :
 			if user_output.readlines() == expected_output.readlines():
+				self.result = 'AC'
 				return True
 			else:
-		 		return False
+				self.result = 'WA'
+				return False
 		# 	user = user_output.readlines()
 		# 	exp = expected_output.readlines()
 		# 	if len(user) == 0 and len(exp) != 0:

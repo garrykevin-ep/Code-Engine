@@ -2,6 +2,7 @@ from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse,JsonResponse
 from .models import *
 from core.tasks import execute_testcases,add
+from celery.result import AsyncResult
 # Create your views here.
 
 def showproblem(request,test,problem):
@@ -14,7 +15,7 @@ def showproblem(request,test,problem):
 		'testcases' : testcases
 		}
 	return render(request,'core/showproblem.html',context)
-2
+
 def submit(request,test,problem):
 	
 	if request.method == 'POST' and request.FILES:
@@ -24,22 +25,23 @@ def submit(request,test,problem):
 		submission.save()
 		
 		job = execute_testcases.delay(submission.code.name, submission.id, problem)
-		# job = add.delay(10)
-		print (job)
-		# return JsonResponse({'job' : 's' })
-		# print ( testcase_path )
-		
+		task = AsyncResult(job.task_id)
+		print (task.result)
 		# microservice and celery
-		return HttpResponse('passed')
+		return JsonResponse({'id' : job.task_id})
 	else:
 		return HttpResponse('failed')
 
-# def task_status(request):
-# 	task_id  = request.POST['task_id']
+def task_status(request):
+	task_id  = request.POST['task_id']
+	task = AsyncResult(task_id)
+	print (task.result)
+	if task.state == 'SUCCESS':
+		return JsonResponse(task.result)
+	else:
+		return JsonResponse(task.result,status=400,safe=False)
 
 # 	pass
 
 
-def service(request):
-	pass
 
