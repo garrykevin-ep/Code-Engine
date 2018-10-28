@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+amqp = "==2.3.2"
+billiard = "==3.5.0.4"
+celery = "==4.2.1"
+kombu = "==4.2.1"
+pytz = "==2018.6"
+redis = "==2.10.6"
+vine = "==1.1.4"
+Django = "==1.10"
+
+[dev-packages]
+
+[requires]
+python_version = "3.6"

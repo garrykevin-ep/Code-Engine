@@ -117,3 +117,6 @@ engine/testcase/
 
 migrations/
 codeengine/media/
+
+# pipenv
+*.lock
