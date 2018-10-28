@@ -3,6 +3,7 @@ from pathlib import Path
 from engine.core import Engine
 from django.conf import  settings
 from .models import TestCase
+
 @shared_task
 def execute_testcases(submission_file, submission_id,problem):
 	base_dir = Path(settings.MEDIA_ROOT).resolve()
@@ -27,6 +28,23 @@ def execute_testcases(submission_file, submission_id,problem):
 					response[id] = 'WA'
 			current_task.update_state(state="PROGRESS",
 				meta =  response )
+	return response
+
+@shared_task
+def execute(base_dir, source_path, testcase_path, output_path):
+	response = ''
+	engine = Engine(source_path = source_path, testcase_path = testcase_path, output_path = output_path)
+	try:
+		engine.process()
+	except Engine.CompileError:
+		 response = 'error'
+	except Engine.TimeOut:
+		response = 'TLE'
+	else:
+		if engine.check_output(output_path):
+			response = 'AC'
+		else:
+			response = 'WA'
 	return response
 
 @shared_task

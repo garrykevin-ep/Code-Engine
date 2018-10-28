@@ -29,7 +29,8 @@
 {% endfor %}
 
 <script type="text/javascript">
-	
+var testcase_jobs = null;
+
 	var csrfcookie = function() {
 	var cookieValue = null,
     name = 'csrftoken';
@@ -60,15 +61,14 @@ function show_result(response)
 function check_status(job_id)
 {
 	var interval;
-	var job_id = $('#task_id')[0].value;
 	$.ajax({
 		'url' : '/status/',
 		headers : {'X-CSRFToken' : csrfcookie()},
 		method : 'post',
-		data : { "task_id" : job_id },
+		data : testcase_jobs,
 		success : function (result) {
 			show_result(result);
-			console.log(result);	
+			console.log("completed",result);
 		},
 		error : function(result){
 				// console.log("err",result.responseJSON);
@@ -93,8 +93,8 @@ function check_status(job_id)
   		http_request.onload = function(oEvent) {
    			 if (http_request.status == 200) 
       			response = JSON.parse(http_request.response);
-      		$('#task_id')[0].value = response['id'];
-      		check_status('');
+      			testcase_jobs = response; 
+      			check_status('');
   		};
 
 
